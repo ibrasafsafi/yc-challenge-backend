@@ -19,7 +19,7 @@ class ProductRequest extends FormRequest
       'name' => 'required|string|max:255',
       'description' => 'required|string',
       'price' => 'required|numeric',
-      'image' => 'required|image',
+      'image' => 'required',
       'categories' => 'required|array',
       'categories.*.id' => ['required', 'integer', Rule::exists(Category::class, 'id')],
     ];

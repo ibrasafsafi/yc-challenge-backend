@@ -32,7 +32,7 @@ Route::name('api.')
       Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
       Route::apiResource('products', ProductController::class);
-
+      Route::apiResource('categories', CategoryController::class);
     });
   });
 

@@ -67,7 +67,16 @@ class ProductRepository
 
   public function create($data)
   {
-    return Product::query()->create($data);
+    $categories = $data['categories'];
+
+    unset($data['categories']);
+
+    /** @var Product $model */
+    $model = Product::query()->create($data);
+
+    $model->categories()->sync(array_column($categories, 'id'));
+
+    return $model;
   }
 
   public function update($model, $data)
@@ -75,6 +84,11 @@ class ProductRepository
     if (!($model instanceof Model)) {
       $model = $this->find($model);
     }
+
+    /** @var Product $model */
+    $model->categories()->sync(array_column($data['categories'], 'id'));
+
+    unset($data['categories']);
 
     $model->update($data);
 
@@ -86,6 +100,8 @@ class ProductRepository
     if (!($model instanceof Model)) {
       $model = $this->find($model);
     }
+
+    $model->categories()->sync([]);
 
     return $model->delete();
   }
