@@ -1,66 +1,241 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# YouCan Challenge Backend API Documentation
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Installation
 
-## About Laravel
+### Requirements
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.1
+- Composer
+- NodeJS
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Backend Installation
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+To install the backend project, follow these steps:
 
-## Learning Laravel
+1. Clone the repository
+2. Run `composer install`
+3. Run `cp .env.example .env`
+4. Run `php artisan key:generate`
+5. Run `php artisan migrate --seed`
+6. Run `php artisan serve`
+7. Go to run the frontend project
+8. Login with `admin@admin.com` and `password`
+9. Enjoy!
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Testing
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+1. Run `php artisan test`
+2. Enjoy!
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Or You can run tests one by one by running `php artisan test --filter=TestName`
 
-## Laravel Sponsors
+### Project Structure
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- `app/Http/Controllers` contains all the API controllers
+- `app/Http/Requests` contains all the API requests
+- `app/Models` contains all the models
+- `app/Repositories` contains all the repositories
+- `app/Http/Ressources` contains all the API resources (transformers)
+- `database/migrations` contains all the database migrations
+- `database/seeders` contains all the database seeders
+- `database/factories` contains all the database factories
+- `routes/api.php` contains all the API routes
+- `tests/Feature` contains all the feature tests
 
-### Premium Partners
+### Description
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+This project is a simple CRUD application for products and categories with authentication.
 
-## Contributing
+In the backend, I used the repository pattern to separate the business logic from the controllers.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
+In This project, I used Laravel Sanctum for authentication and VueJS for the frontend.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## Security Vulnerabilities
+In This project i implemented the following features:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- CRUD for products with categories (belongs to many)
+- CRUD for categories
+- Authentication
+- API Documentation
+- Feature Testing
 
-## License
+## API Documentation
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### API Routes For Products
+
+<table>
+<tr>
+<th>Method</th>
+<th>URI</th>
+<th>Description</th>
+<th>Payload</th>
+</tr>
+
+<tr>
+<td>GET</td>
+<td>/products</td>
+<td>Get all products from the database with categories</td>
+<td></td>
+</tr>
+
+<tr>
+<td>POST</td>
+<td>/products</td>
+<td>Add a product to the database with categories if you want to</td>
+<td>
+
+```json
+{
+  "name": "product name",
+  "price": 1000,
+  "image": "https://via.placeholder.com/150",
+  "description": "product description",
+  "categories": [
+    {
+      "id": 1,
+      "name": "category name"
+      // optional
+    }
+  ]
+}
+```
+
+</td>
+
+</tr>
+
+<tr>
+<td>PUT</td>
+<td>/products/{product}</td>
+<td>Update a product from the database with categories if you want to</td>
+<td>
+
+```json
+{
+  "name": "product name",
+  "price": 1000,
+  "image": "https://via.placeholder.com/150",
+  "description": "product description",
+  "categories": [
+    {
+      "id": 1,
+      "name": "category name"
+      // optional
+    }
+  ]
+}
+```
+
+</td>
+
+</tr>
+
+<tr>
+<td>DELETE</td>
+<td>/products/{product}</td>
+<td>Delete a product from the database</td>
+<td></td>
+</tr>
+
+</table>
+
+### API Routes For Categories
+
+<table>
+<tr>
+<th>Method</th>
+<th>URI</th>
+<th>Description</th>
+<th>Payload</th>
+</tr>
+
+<tr>
+<td>GET</td>
+<td>/categories</td>
+<td>Get all categories from the database</td>
+<td></td>
+</tr>
+
+<tr>
+<td>POST</td>
+<td>/categories</td>
+<td>Add a category to the database</td>
+<td>
+
+```json
+{
+  "name": "category name",
+  "parent_category": {
+    "id": 1,
+    "name": "parent category name"
+  }
+}
+```
+
+</td>
+
+</tr>
+
+<tr>
+<td>PUT</td>
+<td>/categories/{category}</td>
+<td>Update a category from the database</td>
+<td>
+
+```json
+{
+  "name": "category name",
+  "parent_category": {
+    "id": 1,
+    "name": "parent category name"
+  }
+}
+```
+
+</td>
+
+</tr>
+
+<tr>
+<td>DELETE</td>
+<td>/categories/{category}</td>
+<td>Delete a category from the database</td>
+<td></td>
+</tr>
+
+</table>
+
+#### Authentication
+
+##### Login
+
+- **URL:** `/api/login`
+- **Method:** `POST`
+- **URL Params:** `None`
+- **Data Params:**
+  - `email: string`
+  - `password: string`
+
+##### Logout
+
+- **URL:** `/api/logout`
+- **Method:** `POST`
+- **URL Params:** `None`
+- **Data Params:** `None`
+
+##### Register
+
+- **URL:** `/api/register`
+- **Method:** `POST`
+- **URL Params:** `None`
+- **Data Params:**
+  - `name: string`
+  - `email: string`
+  - `password: string`
+  - `password_confirmation: string`
+
+
+
+
+
