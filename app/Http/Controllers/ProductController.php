@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Http\Requests\UploadImageRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ProductController extends Controller
 {
@@ -17,7 +19,11 @@ class ProductController extends Controller
     $this->productRepository = $productRepository;
   }
 
-  public function index(Request $request)
+  /*
+   * @param Request $request
+   * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+   * */
+  public function index(Request $request): AnonymousResourceCollection
   {
     $data = $this->productRepository->all(
       $request->input('sort'),
@@ -32,8 +38,10 @@ class ProductController extends Controller
 
   /**
    * Store a newly created resource in storage.
+   * @param ProductRequest $request
+   * @return ProductResource
    */
-  public function store(ProductRequest $request)
+  public function store(ProductRequest $request): ProductResource
   {
     $data = $request->validated();
 
@@ -44,8 +52,10 @@ class ProductController extends Controller
 
   /**
    * Display the specified resource.
+   * @param int $id
+   * @return ProductResource
    */
-  public function show(int $id)
+  public function show(int $id): ProductResource
   {
     $product = $this->productRepository->find($id);
 
@@ -55,8 +65,11 @@ class ProductController extends Controller
 
   /**
    * Update the specified resource in storage.
+   * @param ProductRequest $request
+   * @param Product $product
+   * @return ProductResource
    */
-  public function update(ProductRequest $request, Product $product)
+  public function update(ProductRequest $request, Product $product): ProductResource
   {
     $data = $request->validated();
 
@@ -67,8 +80,10 @@ class ProductController extends Controller
 
   /**
    * Remove the specified resource from database.
+   * @param Product $product
+   * @return \Illuminate\Http\JsonResponse
    */
-  public function destroy(Product $product)
+  public function destroy(Product $product): \Illuminate\Http\JsonResponse
   {
     $this->productRepository->delete($product);
 
@@ -77,4 +92,22 @@ class ProductController extends Controller
       'message' => 'Product deleted.',
     ]);
   }
+
+  /**
+   * Upload image
+   * @param UploadImageRequest $request
+   * @return string
+   */
+  public function upload(UploadImageRequest $request): string
+  {
+    $image = $request->file('image');
+
+    $imageName = time() . $image->getClientOriginalName();
+
+    $image->storeAs('products', $imageName, 'public');
+
+    return $imageName;
+
+  }
+
 }

@@ -48,9 +48,7 @@ This project is a simple CRUD application for products and categories with authe
 
 In the backend, I used the repository pattern to separate the business logic from the controllers.
 
-
 In This project, I used Laravel Sanctum for authentication and VueJS for the frontend.
-
 
 In This project i implemented the following features:
 
@@ -95,7 +93,6 @@ In This project i implemented the following features:
     {
       "id": 1,
       "name": "category name"
-      // optional
     }
   ]
 }
@@ -121,7 +118,6 @@ In This project i implemented the following features:
     {
       "id": 1,
       "name": "category name"
-      // optional
     }
   ]
 }
@@ -210,7 +206,7 @@ In This project i implemented the following features:
 
 ##### Login
 
-- **URL:** `/api/login`
+- **URL:** `/api/v1/login`
 - **Method:** `POST`
 - **URL Params:** `None`
 - **Data Params:**
@@ -219,14 +215,14 @@ In This project i implemented the following features:
 
 ##### Logout
 
-- **URL:** `/api/logout`
+- **URL:** `/api/v1/logout`
 - **Method:** `POST`
 - **URL Params:** `None`
 - **Data Params:** `None`
 
 ##### Register
 
-- **URL:** `/api/register`
+- **URL:** `/api/v1/register`
 - **Method:** `POST`
 - **URL Params:** `None`
 - **Data Params:**
@@ -234,6 +230,25 @@ In This project i implemented the following features:
   - `email: string`
   - `password: string`
   - `password_confirmation: string`
+
+## CLI Commands
+
+#### Create a new product
+
+- **Command:** `php artisan product:manage --create`
+- **Description:** Create a new product, and then you can fill what you want to add from the questions that will appear
+
+#### Update a product
+
+- **Command:** `php artisan product:manage --update`
+- **Description:** update a product by id, and then you can choose what you want to update from the questions that will
+  appear, and you can leave the field empty if you don't want to update it
+
+#### Delete a product
+
+- **Command:** `php artisan product:manage --delete`
+- **Description:** delete a product by id
+
 
 
 

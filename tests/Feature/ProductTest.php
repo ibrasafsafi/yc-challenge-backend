@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Repositories\CategoryRepository;
 use App\Repositories\ProductRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -22,7 +23,12 @@ class ProductTest extends TestCase
 
     $this->setUpUser();
 
-    $this->productRepository = new ProductRepository();
+    // intialize the product repository and inject the category repository
+    // into the constructor
+
+    $this->productRepository = new ProductRepository(
+      app(CategoryRepository::class)
+    );
   }
 
   public function test_can_get_all_products()
@@ -119,18 +125,21 @@ class ProductTest extends TestCase
   {
     $product = Product::factory()->create();
 
+    $categories = Category::factory()->count(2)->create()->toArray();
+
     $updatedData = [
       'name' => $this->faker->word,
       'description' => $this->faker->sentence,
       'price' => $this->faker->randomFloat(2, 1, 100),
-      'categories' => Category::factory()->count(2)->create()->toArray(),
+      'categories' => $categories,
     ];
 
     $result = $this->productRepository->update($product, $updatedData);
 
     $this->assertInstanceOf(Product::class, $result);
     $this->assertEquals($updatedData['name'], $result->name);
-    $this->assertEquals(count($updatedData['categories']), $result->categories->count());
+
+    $this->assertEquals(count($categories), $result->categories->count());
   }
 
   /** @test */
@@ -146,7 +155,7 @@ class ProductTest extends TestCase
   }
 
   /** @test */
-  public function can_delete_product()
+  public function can_delete_product(): void
   {
     $product = Product::factory()->create();
 

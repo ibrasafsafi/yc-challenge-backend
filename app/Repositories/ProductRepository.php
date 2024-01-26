@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class ProductRepository
 {
@@ -30,7 +31,23 @@ class ProductRepository
     'categories',
   ];
 
-  public function all($sort = null, $direction = 'asc', $search = null, $filters = [], $perPage = 30, $defaultIncludes = true)
+  protected CategoryRepository $categoryRepository;
+
+  public function __construct(CategoryRepository $categoryRepository)
+  {
+    $this->categoryRepository = $categoryRepository;
+  }
+
+  /**
+   * @param string|null $sort
+   * @param string $direction
+   * @param string|null $search
+   * @param array<mixed> $filters
+   * @param int $perPage
+   * @param bool $defaultIncludes
+   * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator<Product>
+   **/
+  public function all(string $sort = null, string $direction = 'asc', string $search = null, array $filters = [], int $perPage = 30, bool $defaultIncludes = true): \Illuminate\Contracts\Pagination\LengthAwarePaginator
   {
     $sort = $this->validateSortField($sort);
     $direction = $this->validateSortDirection($direction);
@@ -60,42 +77,68 @@ class ProductRepository
     return $query->paginate($perPage);
   }
 
-  public function find($id)
+  /**
+   * @param int $id
+   * @return Product
+   **/
+  public function find(int $id): Product
   {
     return Product::with(self::DEFAULT_INCLUDES)->find($id);
   }
 
-  public function create($data)
+  /**
+   * @param array<mixed> $data
+   * @return Product
+   **/
+  public function create(array $data): Product
   {
-    $categories = $data['categories'];
+    // open a transaction to ensure that the categories are synced only if the product is created
+    return \DB::transaction(function () use ($data) {
+      $categories = $data['categories'];
 
-    unset($data['categories']);
+      unset($data['categories']);
 
-    /** @var Product $model */
-    $model = Product::query()->create($data);
+      /** @var Product $model */
+      $model = Product::query()->create($data);
 
-    $model->categories()->sync(array_column($categories, 'id'));
+      // Sync categories using the CategoryRepository instead of using the sync method directly
+      $this->categoryRepository->syncProductCategories($model, $categories);
+      // before i used this: $model->categories()->sync(array_column($categories, 'id'));
 
-    return $model;
+      return $model;
+    });
   }
 
-  public function update($model, $data)
+  /**
+   * @param int|Product $model
+   * @param array<mixed> $data
+   * @return Product
+   **/
+  public function update(Product|int $model, array $data): Product
   {
-    if (!($model instanceof Model)) {
-      $model = $this->find($model);
-    }
+    // open a transaction to ensure that the categories are synced only if the product is updated
+    return \DB::transaction(function () use ($data, $model) {
 
-    /** @var Product $model */
-    $model->categories()->sync(array_column($data['categories'], 'id'));
+      if (!($model instanceof Model)) {
+        $model = $this->find($model);
+      }
 
-    unset($data['categories']);
+      // Sync categories using the CategoryRepository instead of using the sync method directly
+      $this->categoryRepository->syncProductCategories($model, array_column($data['categories'], 'id'));
 
-    $model->update($data);
+      unset($data['categories']);
 
-    return $model;
+      $model->update($data);
+
+      return $model;
+    });
   }
 
-  public function delete($model)
+  /**
+   * @param int|Product $model
+   * @return bool
+   **/
+  public function delete(Product|int $model): bool
   {
     if (!($model instanceof Model)) {
       $model = $this->find($model);
@@ -111,7 +154,11 @@ class ProductRepository
     return in_array($sort, self::ALLOWED_SORT_FIELDS) ? $sort : null;
   }
 
-  private function validateSortDirection($direction)
+  /*
+   * @return string
+   * @param string $direction
+   * */
+  private function validateSortDirection(string $direction): string
   {
     return $direction === 'desc' ? 'desc' : 'asc';
   }
@@ -121,7 +168,11 @@ class ProductRepository
     return $search;
   }
 
-  private function sanitizeFilters($filters)
+  /*
+   * @return array<mixed>
+    * @param array<mixed> $filters
+   * */
+  private function sanitizeFilters($filters): array
   {
     return array_intersect_key($filters, array_flip(self::ALLOWED_FILTER_FIELDS));
   }

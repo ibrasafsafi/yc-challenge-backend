@@ -33,6 +33,8 @@ Route::name('api.')
 
       Route::apiResource('products', ProductController::class);
       Route::apiResource('categories', CategoryController::class);
+
+      Route::post('products/upload', [ProductController::class, 'upload']);
     });
   });
 

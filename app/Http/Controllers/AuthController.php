@@ -3,50 +3,40 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
-use App\Models\User;
+use App\Repositories\UserRepository;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-  public function __construct()
+  protected UserRepository $userRepository;
+
+  public function __construct(UserRepository $userRepository)
   {
     $this->middleware('throttle:3,1')->only('login');
+    $this->userRepository = $userRepository;
   }
 
-  public function register(Request $request)
-  {
-    $request->validate([
-      'name' => 'required|string|max:255',
-      'email' => 'required|string|email|max:255|unique:users',
-      'password' => ['required', 'confirmed', Password::defaults()],
-    ]);
-
-    $user = User::query()->create([
-      'name' => $request->post('name'),
-      'email' => $request->post('email'),
-      'password' => Hash::make($request->post('password')),
-    ]);
-
-    event(new Registered($user));
-
-    $token = $user->createToken('api-token');
-
-    return UserResource::make($user);
-  }
-
-  public function login(LoginRequest $request)
+  /*
+   * @param LoginRequest $request
+   * @return UserResource
+   * */
+  public function login(LoginRequest $request): UserResource
   {
     $request->authenticate();
 
     return UserResource::make($request->user());
   }
 
-  public function logout(Request $request)
+  /*
+   * @param Request $request
+   * @return \Illuminate\Http\JsonResponse
+   * */
+  public function logout(Request $request): JsonResponse
   {
     Auth::guard('web')->logout();
 
@@ -61,7 +51,28 @@ class AuthController extends Controller
     ]);
   }
 
-  public function user(Request $request)
+  /*
+   * @param RegisterRequest $request
+   * @return UserResource
+   * */
+  public function register(RegisterRequest $request): UserResource
+  {
+    $data = $request->validated();
+
+    $user = $this->userRepository->create($data);
+
+    event(new Registered($user));
+
+    $token = $user->createToken('api-token');
+
+    return UserResource::make($user);
+  }
+
+  /*
+   * @param Request $request
+   * @return UserResource
+   * */
+  public function user(Request $request): UserResource
   {
     return UserResource::make($request->user());
   }

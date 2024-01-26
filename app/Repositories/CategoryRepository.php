@@ -3,27 +3,36 @@
 namespace App\Repositories;
 
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 
 class CategoryRepository
 {
 
-  public function all()
-  {
-    return Category::all();
-  }
-
-  public function find($id)
+  /*
+   * @param int $id
+   * @return Category
+   * */
+  public function find(int $id): Category
   {
     return Category::find($id);
   }
 
-  public function create($data)
+  /*
+   * @param array<mixed> $data
+   * @return Category
+   * */
+  public function create(array $data) : Category
   {
     return Category::query()->create($data);
   }
 
-  public function update($model, $data)
+  /*
+   * @param int|Category $model
+   * @param array<mixed> $data
+   * @return Category
+   * */
+  public function update(Category|int $model, array $data) : Category
   {
     if (!($model instanceof Model)) {
       $model = $this->find($model);
@@ -34,7 +43,30 @@ class CategoryRepository
     return $model;
   }
 
-  public function delete($model)
+
+  /*
+   * @param Product $product
+   * @param array<mixed> $categories
+   * */
+  public function syncProductCategories(Product $product, array $categories): void
+  {
+    $product->categories()->sync(array_column($categories, 'id'));
+  }
+
+  /*
+   * @return \Illuminate\Database\Eloquent\Collection<Category>
+   * */
+  public function all(): \Illuminate\Database\Eloquent\Collection
+  {
+    return Category::all();
+  }
+
+
+  /*
+   * @param int|Category $model
+   * @return bool
+   * */
+  public function delete(Category|int $model) : bool
   {
     if (!($model instanceof Model)) {
       $model = $this->find($model);
