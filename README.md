@@ -17,10 +17,11 @@ To install the backend project, follow these steps:
 3. Run `cp .env.example .env`
 4. Run `php artisan key:generate`
 5. Run `php artisan migrate --seed`
-6. Run `php artisan serve`
-7. Go to run the frontend project
-8. Login with `admin@admin.com` and `password`
-9. Enjoy!
+6. php `artisan storage:link`
+7. Run `php artisan serve`
+8. Go to run the frontend project
+9. Login with `admin@admin.com` and `password`
+10. Enjoy!
 
 ### Testing
 
@@ -237,17 +238,21 @@ In This project i implemented the following features:
 
 - **Command:** `php artisan product:manage --create`
 - **Description:** Create a new product, and then you can fill what you want to add from the questions that will appear
+- **Note:** You can add categories to the product by names (separated by comma), and if the category doesn't exist, it will be created
+
 
 #### Update a product
 
 - **Command:** `php artisan product:manage --update`
 - **Description:** update a product by id, and then you can choose what you want to update from the questions that will
   appear, and you can leave the field empty if you don't want to update it
+- **Note:** You can add categories to the product by names (separated by comma), and if the category doesn't exist, it will be created
 
 #### Delete a product
 
 - **Command:** `php artisan product:manage --delete`
-- **Description:** delete a product by id
+- **Description:** delete a product by id that you will enter
+
 
 
 
