@@ -50,7 +50,7 @@ class CategoryRepository
    * */
   public function syncProductCategories(Product $product, array $categories): void
   {
-    $product->categories()->sync(array_column($categories, 'id'));
+    $product->categories()->sync($categories);
   }
 
   /*

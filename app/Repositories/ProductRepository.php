@@ -102,7 +102,7 @@ class ProductRepository
       $model = Product::query()->create($data);
 
       // Sync categories using the CategoryRepository instead of using the sync method directly
-      $this->categoryRepository->syncProductCategories($model, $categories);
+      $this->categoryRepository->syncProductCategories($model, array_column($categories, 'id'));
       // before i used this: $model->categories()->sync(array_column($categories, 'id'));
 
       return $model;
