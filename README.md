@@ -17,7 +17,7 @@ To install the backend project, follow these steps:
 3. Run `cp .env.example .env`
 4. Run `php artisan key:generate`
 5. Run `php artisan migrate --seed`
-6. php `artisan storage:link`
+6. php `php artisan storage:link`
 7. Run `php artisan serve`
 8. Go to run the frontend project
 9. Login with `admin@admin.com` and `password`
